@@ -4,7 +4,11 @@ import { redirect } from "react-router";
 
 export const loginWithGoogle = async () => {
   try {
-    account.createOAuth2Session(OAuthProvider.Google);
+    account.createOAuth2Session(
+      OAuthProvider.Google,
+      `${window.location.origin}/`,
+      `${window.location.origin}/404`
+    );
   } catch (error) {
     console.log("loginWithGoogle: ", error);
   }
@@ -112,7 +116,7 @@ export const storeUserData = async () => {
   }
 };
 
-export const getExistingUser = async () => {
+export const getExistingUser = async ($id: string) => {
   try {
     const user = await account.get();
 
