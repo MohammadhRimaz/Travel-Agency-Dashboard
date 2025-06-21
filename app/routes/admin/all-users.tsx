@@ -1,16 +1,10 @@
 import { Header } from "../../../components";
-import {
-  ColumnsDirective,
-  ColumnDirective,
-  GridComponent,
-} from "@syncfusion/ej2-react-grids";
 import { cn, formatDate } from "~/lib/utils";
 import { getAllUsers } from "~/appwrite/auth";
 import type { Route } from "./+types/all-users";
 
 export const loader = async () => {
   const { users, total } = await getAllUsers(10, 0);
-
   return { users, total };
 };
 
@@ -24,72 +18,67 @@ const AllUsers = ({ loaderData }: Route.ComponentProps) => {
         description="Filter, sort, and access detailed user profiles"
       />
 
-      <GridComponent dataSource={users} gridLines="None">
-        <ColumnsDirective>
-          <ColumnDirective
-            field="name"
-            headerText="Name"
-            width="200"
-            textAlign="Left"
-            template={(props: UserData) => (
-              <div className="flex items-center gap-1.5 px-4">
-                <img
-                  src={props.imageUrl}
-                  alt="user"
-                  className="rounded-full size-8 aspect-square"
-                  referrerPolicy="no-referrer"
-                />
-                <span>{props.name}</span>
-              </div>
-            )}
-          />
-          <ColumnDirective
-            field="email"
-            headerText="Email Address"
-            width="200"
-            textAlign="Left"
-          />
-          <ColumnDirective
-            field="joinedAt"
-            headerText="Date Joined"
-            width="140"
-            textAlign="Left"
-            template={({ joinedAt }: { joinedAt: string }) =>
-              formatDate(joinedAt)
-            }
-          />
-          <ColumnDirective
-            field="status"
-            headerText="Type"
-            width="100"
-            textAlign="Left"
-            template={({ status }: UserData) => (
-              <article
-                className={cn(
-                  "status-column",
-                  status === "user" ? "bg-success-50" : "bg-light-300"
-                )}
-              >
-                <div
-                  className={cn(
-                    "size-1.5 rounded-full",
-                    status === "user" ? "bg-success-500" : "bg-gray-500"
-                  )}
-                />
-                <h3
-                  className={cn(
-                    "font-inter text-xs font-medium",
-                    status === "user" ? "text-success-700" : "text-gray-500"
-                  )}
-                >
-                  {status}
-                </h3>
-              </article>
-            )}
-          />
-        </ColumnsDirective>
-      </GridComponent>
+      <div className="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+        <table className="min-w-full table-auto text-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="text-left py-3 px-4 font-medium text-black">
+                Name
+              </th>
+              <th className="text-left py-3 px-4 font-medium text-black">
+                Email Address
+              </th>
+              <th className="text-left py-3 px-4 font-medium text-black">
+                Date Joined
+              </th>
+              <th className="text-left py-3 px-4 font-medium text-black">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {users.map((user: any) => (
+              <tr key={user.id} className="hover:bg-neutral-300">
+                <td className="py-3 px-4 flex items-center gap-2">
+                  <img
+                    src={user.imageUrl}
+                    alt="user"
+                    className="rounded-full size-8 aspect-square object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                  <span>{user.name}</span>
+                </td>
+                <td className="py-3 px-4">{user.email}</td>
+                <td className="py-3 px-4">{formatDate(user.joinedAt)}</td>
+                <td className="py-3 px-4">
+                  <article
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2 py-0.5 rounded-md",
+                      user.status === "user"
+                        ? "bg-success-50 text-success-700"
+                        : "bg-light-300 text-primary-500"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "size-1.5 rounded-full",
+                        user.status === "user"
+                          ? "bg-success-500"
+                          : "bg-primary-500"
+                      )}
+                    />
+                    <h3 className="text-xs font-semibold font-inter">
+                      {user.status}
+                    </h3>
+                  </article>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 };
+
 export default AllUsers;
