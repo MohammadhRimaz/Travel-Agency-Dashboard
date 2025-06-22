@@ -2,14 +2,15 @@ import { Header } from "components";
 import { ComboBoxComponent } from "@syncfusion/ej2-react-dropdowns";
 import type { Route } from "./+types/create-trip";
 import { comboBoxItems, selectItems } from "~/constants";
-import { formatKey } from "~/lib/utils";
+import { cn, formatKey } from "~/lib/utils";
 import {
   LayerDirective,
   LayersDirective,
   MapsComponent,
 } from "@syncfusion/ej2-react-maps";
-import { useState } from "react";
+import React, { useState } from "react";
 import { world_map } from "~/constants/world_map";
+import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
 
 export const loader = async () => {
   const response = await fetch(
@@ -36,7 +37,31 @@ const CreateTrip = ({ loaderData }: Route.ComponentProps) => {
     groupType: "",
   });
 
-  const handleSubmit = async () => {};
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (
+      !formData.country ||
+      !formData.duration ||
+      !formData.travelStyle ||
+      !formData.interest ||
+      !formData.budget ||
+      !formData.groupType
+    ) {
+      setError("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
+    if (formData.duration <= 0 || formData.duration > 10) {
+      setError("Duration must be between 1 to 10 days.");
+      setLoading(false);
+      return;
+    }
+  };
 
   const handleChange = (key: keyof TripFormData, value: string | number) => {
     setFormData({ ...formData, [key]: value });
@@ -145,7 +170,7 @@ const CreateTrip = ({ loaderData }: Route.ComponentProps) => {
             </div>
           ))}
 
-          {/* Display the location map */}
+          {/* Display the selected location map */}
           <div>
             <label htmlFor="location">Location on the World Map</label>
             <MapsComponent>
@@ -160,6 +185,33 @@ const CreateTrip = ({ loaderData }: Route.ComponentProps) => {
               </LayersDirective>
             </MapsComponent>
           </div>
+
+          {/* Horizontal Line to End the form */}
+          <div className="bg-gray-300 h-px w-full" />
+
+          {error && (
+            <div className="error">
+              <p>{error}</p>
+            </div>
+          )}
+
+          <footer className="px-6 w-full">
+            <ButtonComponent
+              type="submit"
+              className="button-class !h-12 !w-full"
+              disabled={loading}
+            >
+              <img
+                src={`/assets/icons/${
+                  loading ? "loader.svg" : "magic-star.svg"
+                }`}
+                className={cn("size-5", { "animate-spin": loading })}
+              />
+              <span className="p-16-semibold text-white">
+                {loading ? "Generating..." : "Generate Trip"}
+              </span>
+            </ButtonComponent>
+          </footer>
         </form>
       </section>
     </main>
