@@ -11,6 +11,7 @@ import {
 import React, { useState } from "react";
 import { world_map } from "~/constants/world_map";
 import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
+import { account } from "~/appwrite/client";
 
 export const loader = async () => {
   const response = await fetch(
@@ -60,6 +61,22 @@ const CreateTrip = ({ loaderData }: Route.ComponentProps) => {
       setError("Duration must be between 1 to 10 days.");
       setLoading(false);
       return;
+    }
+    const user = await account.get();
+    if (!user.$id) {
+      setError("You must be logged in to create a trip.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      console.log("user: ", user);
+      console.log("formData: ", formData);
+    } catch (error) {
+      console.error("Error creating trip:", error);
+      setError("Failed to create trip. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
