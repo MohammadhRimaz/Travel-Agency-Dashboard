@@ -7,7 +7,7 @@ import {
   ChipListComponent,
   ChipsDirective,
 } from "@syncfusion/ej2-react-buttons";
-import { Header, InfoPills } from "components";
+import { Header, InfoPills, TripCard } from "components";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { tripId } = params;
@@ -15,12 +15,24 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Error("Trip ID is required");
   }
 
-  return await getTripById(tripId);
+  const [trip, trips] = await Promise.all([
+    getTripById(tripId),
+    getAllTrips(4, 0),
+  ]);
+
+  return {
+    trip,
+    allTrips: trips.allTrips.map(({ $id, tripDetail, imageUrls }) => ({
+      id: $id,
+      ...parseTripData(tripDetail),
+      imageUrls: imageUrls ?? [],
+    })),
+  };
 };
 
 const TripDetail = ({ loaderData }: Route.ComponentProps) => {
-  const imageUrls = loaderData?.imageUrls || [];
-  const tripData = parseTripData(loaderData?.tripDetail);
+  const imageUrls = loaderData?.trip?.imageUrls || [];
+  const tripData = parseTripData(loaderData?.trip?.tripDetail);
   const {
     name,
     duration,
@@ -35,6 +47,8 @@ const TripDetail = ({ loaderData }: Route.ComponentProps) => {
     weatherInfo,
     country,
   } = tripData || {};
+
+  const allTrips = loaderData.allTrips as Trip[] | [];
 
   const pillItems = [
     {
@@ -55,6 +69,11 @@ const TripDetail = ({ loaderData }: Route.ComponentProps) => {
     },
   ];
 
+  const visitTimeAndWeatherInfo = [
+    { title: "Best Time to Visit", items: bestTimeToVisit },
+    { title: "Weather Info", items: weatherInfo },
+  ];
+
   return (
     <main className="travel-detail wrapper">
       <Header
@@ -73,7 +92,7 @@ const TripDetail = ({ loaderData }: Route.ComponentProps) => {
             <InfoPills
               text={`${
                 itinerary
-                  ?.slice(0, 2)
+                  ?.slice(0, 3)
                   .map((item) => item.location)
                   .join(", ") || ""
               }`}
@@ -137,6 +156,92 @@ const TripDetail = ({ loaderData }: Route.ComponentProps) => {
             </li>
           </ul>
         </section>
+
+        {/* Trip Title */}
+        <section className="title">
+          <article>
+            <h3>
+              {duration}-Day {country} {travelStyle} Trip
+            </h3>
+            <p>
+              {budget}, {groupType} and {interests}
+            </p>
+          </article>
+
+          <h2>{estimatedPrice}</h2>
+        </section>
+
+        {/* Trip Description */}
+        <p className="text-sm md:text-lg font-normal text-dark-400">
+          {description}
+        </p>
+
+        {/* Itinerary */}
+        <ul className="itinerary">
+          {itinerary?.map((dayPlan: DayPlan, i: number) => (
+            <li key={i}>
+              <h3>
+                Day {dayPlan.day}: {dayPlan.location}
+              </h3>
+
+              <ul>
+                {dayPlan.activities.map((activity, i: number) => (
+                  <li key={i}>
+                    <span className="flex-shring-0 p-18-semibold">
+                      {activity.time}
+                    </span>
+                    <p className="flex-grow">{activity.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+
+        {/* Best Time to Visit and Weather Info */}
+        {visitTimeAndWeatherInfo.map((section) => (
+          <section key={section.title} className="visit">
+            <div>
+              <h3>{section.title}</h3>
+
+              <ul>
+                {section.items?.map((item) => (
+                  <li key={item}>
+                    <p className="flex-grow">{item}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        ))}
+      </section>
+      {/* Popular Trips Section */}
+      <section className="flex flex-col gap-6">
+        <h2 className="p-24-semibold text-dark-100">Popular Trips</h2>
+
+        <div className="trip-grid">
+          {allTrips.map(
+            ({
+              id,
+              name,
+              imageUrls,
+              itinerary,
+              interests,
+              travelStyle,
+              estimatedPrice,
+            }) => (
+              <TripCard
+                id={id}
+                key={id}
+                name={name}
+                location={itinerary?.[0].location ?? ""}
+                imageUrl={imageUrls[0]}
+                tags={[interests, travelStyle]}
+                price={estimatedPrice}
+              />
+            )
+          )}
+        </div>
       </section>
     </main>
   );
