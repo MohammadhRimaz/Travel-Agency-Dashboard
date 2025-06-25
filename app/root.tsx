@@ -34,6 +34,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* ✨ Add title */}
+        <title>Travel Agency Dashboard</title>
+
+        {/* ✅ SVG Logo as Favicon */}
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/logo.svg" />
+
         <Meta />
         <Links />
       </head>
