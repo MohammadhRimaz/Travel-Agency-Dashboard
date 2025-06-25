@@ -1,87 +1,126 @@
-# Welcome to React Router!
+# ✈️ Travel Agency AI Dashboard
 
-A modern, production-ready template for building full-stack React applications using React Router.
+An intelligent, AI-powered travel planning dashboard built with React, TypeScript, Vite, and Appwrite. It provides seamless trip planning for users and full administrative control via a modern, real-time dashboard.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+Live Site: [https://travel-agency-dashboard-topaz.vercel.app](https://travel-agency-dashboard-topaz.vercel.app)
 
-## Features
+---
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## 🚀 Features
 
-## Getting Started
+### 🔐 Authentication
 
-### Installation
+- Google OAuth2 login using Appwrite Authentication.
+- All routes are protected — users must sign in to access content.
+- Separate routes and pages for **Users** and **Admins**.
 
-Install the dependencies:
+### 👤 User Home Page
+
+- Responsive layout displaying:
+  - Google profile image.
+  - Logout button.
+  - Admin dashboard link (only if the user is an admin).
+- Browse all **AI-generated trip plans**.
+  - Each plan includes:
+    - 3 AI-rendered images (via Unsplash API).
+    - Title, location, travel style, and budget.
+    - Highlights: weather, best time to visit, interests, and more.
+    - Day-by-day itinerary (morning, afternoon, evening plans).
+    - Booking functionality (redirects to placeholder payment page).
+
+### 🛠 Admin Dashboard
+
+> _Admins only_
+
+#### 📊 Dashboard
+
+- Real-time stats:
+  - Total users
+  - Total trips
+  - Active users
+- Interactive charts using Syncfusion:
+  - User Growth Chart
+  - Trip Trends Chart
+- Latest Created Trips
+
+#### 🧑‍💼 All Users
+
+- View all signed-in users:
+  - Name
+  - Profile image
+  - Role (User/Admin)
+  - Join date
+
+#### ✨ AI Trips Creation
+
+- Admin can create new trip plans using:
+  - **Gemini AI** (for generating content)
+  - **Unsplash AI** (for related images)
+- Form includes:
+  - Country selector (highlighted on world map)
+  - Interests, travel type, budget, group type, duration
+- Auto-generates complete plan with a beautiful display
+
+---
+
+## 💾 Tech Stack
+
+| Tech         | Purpose                               |
+| ------------ | ------------------------------------- |
+| React        | Frontend Framework                    |
+| Vite         | Lightning-fast build tool             |
+| TypeScript   | Type safety and modern JS features    |
+| Tailwind CSS | Utility-first styling                 |
+| Appwrite     | Authentication, database, and storage |
+| Gemini AI    | AI-based content generation           |
+| Unsplash API | AI-based image generation             |
+| Syncfusion   | Interactive charts and UI components  |
+| Sentry       | Error tracking and monitoring         |
+| Vercel       | Deployment platform                   |
+
+---
+
+## 🧑‍💻 Getting Started
+
+### 📦 Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Development
+### 🔧 Environment Variables
 
-Start the development server with HMR:
+```bash
+# Syncfusion
+VITE_SYNCFUSION_LICENSE_KEY
+
+# Appwrite
+VITE_APPWRITE_PROJECT_ID
+VITE_APPWRITE_API_KEY
+VITE_APPWRITE_DATABASE_ID
+VITE_APPWRITE_USERS_COLLECTION_ID
+VITE_APPWRITE_TRIPS_COLLECTION_ID
+
+VITE_APPWRITE_API_ENDPOINT
+
+# Google Auth
+VITE_GOOGLE_CLIENT_ID
+VITE_GOOGLE_CLIENT_SECRET
+
+# Sentry
+VITE_SENTRY_AUTH_TOKEN
+# Gemini
+GEMINI_API_KEY
+
+# Unsplash
+UNSPLASH_ACCESS_KEY
+
+```
+
+### 🏃 Run Locally
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+- Navigate to: http://localhost:5173
