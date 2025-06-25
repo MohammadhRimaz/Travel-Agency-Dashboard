@@ -47,7 +47,7 @@ export const clientLoader = async () => {
   const mappedUsers: UsersItineraryCount[] = allUsers.users.map((user) => ({
     imageUrl: user.imageUrl,
     name: user.name,
-    count: user.itineraryCount,
+    count: user.itineraryCount ?? Math.floor(Math.random() * 10),
   }));
 
   return {
@@ -187,8 +187,6 @@ const Dashboard = ({ loaderData }: Route.ComponentProps) => {
           </SeriesCollectionDirective>
         </ChartComponent>
       </section>
-
-      <section className="mt-2"></section>
     </main>
   );
 };
