@@ -5,11 +5,16 @@ import { account } from "~/appwrite/client";
 
 export async function clientLoader() {
   try {
-    const user = await account.get();
+    const session = await account.getSession("current");
+    if (session?.$id) {
+      const user = await account.get();
 
-    if (user.$id) return redirect("/");
-  } catch (error) {
-    console.log("Error fetching user.", error);
+      if (user.$id) return redirect("/");
+    }
+  } catch (error: any) {
+    if (error.code !== 401) {
+      console.log("Unexpected error fetching session or user:", error);
+    }
   }
 }
 
